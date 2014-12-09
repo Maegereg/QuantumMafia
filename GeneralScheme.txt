@@ -1,0 +1,18 @@
+Classes:
+
+Player - name, actions
+
+PlayerInstance - night killed, roleblocked, protected
+
+Role [subclasses]- night action functions, night action order, night action type, faction
+
+Structure:
+
+One player class per player
+One Role class per player (of various subclasses)
+
+Information for every possible permutation is not stored. Instead, we iterate through permutations.
+For every permutation we replay the game up to this point. Then, based on the current state of the 
+permutation, summary stastics are saved.
+
+TODO: Experiment with pruning. Every kill action can rule out up to at least (n-2)! permutations, so we may have significant savings very quickly. On the other hand, keeping track of the permutations to skip may be prohibitively expensive.
