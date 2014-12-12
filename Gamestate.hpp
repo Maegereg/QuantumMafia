@@ -8,8 +8,8 @@ class Role;
 
 class Gamestate{
 protected:
-	std::vector<Player> players;
-	std::vector<Role> roles;
+	std::vector<Player*> players;
+	std::vector<Role*> roles;
 	int phaseNumber;
 
 public:
