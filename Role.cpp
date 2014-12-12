@@ -1,11 +1,23 @@
 #include "Role.hpp"
-#include <iostream>
-class Role {
 
-public:
-	bool isGuilty() {return guilty;}
-	string getName() {return name;}
-	int getFaction() {return faction;}
-	string getActionType {return actionType;}
-	int getActionPriotiy {return actionPriority;}
+Role::Role() {
+	phaseKilled = -1;
+	roleblocked = false;
+	protection = false;
 }
+
+bool Role::isGuilty() {return guilty;}
+
+std::string Role::getName() {return roleName;}
+
+std::string Role::getFaction() {return faction;}
+
+std::string Role::getActionType() {return actionType;}
+
+int Role::getActionPriotiy() {return actionPriority;}
+
+int Role::getPhaseKilled() {return phaseKilled;}
+
+bool Role::isProtected() {return protection;}
+
+bool Role::isRoleBlocked() {return roleblocked;}

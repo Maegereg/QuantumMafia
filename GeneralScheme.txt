@@ -2,9 +2,7 @@ Classes:
 
 Player - name, actions
 
-PlayerInstance - night killed, roleblocked, protected
-
-Role [subclasses]- night action functions, night action order, night action type, faction
+Role [subclasses]- night action functions, night action order, night action type, faction, night killed, roleblocked, protected
 
 Structure:
 
