@@ -11,7 +11,7 @@ public:
 	bool validateAction(Role *target, int phaseNumber);
 	void performAction(Role *target, int phaseNumber);
 	std::string getResult(Role *target);
-	void onDeath(std::vector<Role> playerList);
+	void onDeath(std::vector<Role*> playerList);
 };
 
 #endif

@@ -1,5 +1,6 @@
 #ifndef ROLE_HPP_INCLUDED
 #define ROLE_HPP_INCLUDED
+#include "RoleFactory.hpp"
 #include <string>
 #include <vector>
 

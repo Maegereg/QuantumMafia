@@ -12,9 +12,14 @@ protected:
 	std::vector<Role*> roles;
 	int phaseNumber;
 
+	std::vector<std::string>* getRoleTypes();
+	std::vector<std::string>* getFactions();
+
 public:
-	Gamestate(std::vector<std::string> playerNames);
-	Gamestate(std::vector<std::string> playerNames, int phaseNum);
+	Gamestate(std::vector<std::string> playerNames, std::vector<Role*> roles);
+	Gamestate(std::vector<std::string> playerNames, std::vector<Role*> roles, int phaseNum);
+
+	int getNumPlayers();
 };
 
 

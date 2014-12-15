@@ -1,4 +1,5 @@
 #include "VanillaTownie.hpp"
+#include <iostream>
 
 VanillaTownie::VanillaTownie() {
 	roleName = "Vanilla Townie";
@@ -21,6 +22,8 @@ std::string VanillaTownie::getResult(Role *target){
 	return "";
 }
 
-void VanillaTownie::onDeath(std::vector<Role> playerList){
+void VanillaTownie::onDeath(std::vector<Role*> playerList){
 	return;
 }
+
+static RoleRegistrar registrar("Vanilla Townie", [](void) -> Role* {return new VanillaTownie();});
