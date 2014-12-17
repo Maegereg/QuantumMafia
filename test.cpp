@@ -1,3 +1,4 @@
+#include <iostream>
 #include <vector>
 #include "Gamestate.hpp"
 #include "Role.hpp"
@@ -14,5 +15,11 @@ int main(int argc, char** argv){
 	playerNames.push_back("Bob");
 	Gamestate state(playerNames, roles);
 
-	
+	float* aliceStatistics = state.getStandardStatistics(0);
+	cout << aliceStatistics[0];
+	cout <<"\n";
+	cout << aliceStatistics[1];
+	cout <<"\n";
+	cout << aliceStatistics[2];
+	cout <<"\n";
 }
