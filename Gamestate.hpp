@@ -20,7 +20,6 @@ protected:
 	it makes it easier to assign uncollapsed players to roles in a permutation*/
 	vector<Role*> uncollapsedRoles;
 	int phaseNumber;
-	int resolvedTo;
 
 	//Each row corresponds to a player, each column to a role. Each entry is the number of quantum states currently in the game in which the given player has the given role.
 	int** roleCounts;
@@ -32,8 +31,6 @@ protected:
 
 	void initializeFactionList();
 	void clearCounts();
-
-	void resolveNight(int nightPhase);
 
 public:
 	Gamestate(vector<string> playerNames, vector<Role*> roles, int phaseNum=0);

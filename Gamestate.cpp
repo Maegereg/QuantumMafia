@@ -2,7 +2,7 @@
 #include <iostream>
 #include <queue>
 #include "Gamestate.hpp"
-#include "Player.hpp"
+#include "MafiaGame.hpp"
 #include "Role.hpp"
 
 Gamestate::Gamestate(vector<string> playerNames, vector<Role*> gameRoles, int phaseNum/* = 0 */){
@@ -10,7 +10,6 @@ Gamestate::Gamestate(vector<string> playerNames, vector<Role*> gameRoles, int ph
 	for (int i = 0; i<playerNames.size(); ++i){
 		players.push_back(new Player(playerNames[i]));
 	}
-	resolvedTo = 0;
 	phaseNumber = phaseNum;
 	//Similarly, all roles will start as undetermined
 	roles = gameRoles;
@@ -104,26 +103,13 @@ void Gamestate::clearCounts(){
 	}
 }
 
-struct RoleAssignment{
-	Player* player;
-	Role* role;
-};
-
-class CompareRoleAssignment{
-	public:
-	bool operator()(RoleAssignment& r1, RoleAssignment& r2)
-	{
-		return r1.role->actionPriority > r1.role->actionPriority;
-	}
-};
-
-void Gamestate::resolveNight(int nightPhase){
-	int *roleAssignment = new int[players.size()];
+void Gamestate::resolveToCurrentPhase(){
+	vector<int> roleAssignment;
 
 	clearCounts();
 
 	for (int i = 0; i<uncollapsedRoles.size(); ++i){
-		roleAssignment[i] = i;
+		roleAssignment.push_back(i);
 	}
 
 	do{
@@ -133,9 +119,7 @@ void Gamestate::resolveNight(int nightPhase){
 			roles[i]->protection = false;
 		}
 
-		//Set up a priority queue of roles sorted by increasing action priority
-		priority_queue<RoleAssignment, vector<RoleAssignment>, CompareRoleAssignment> roleOrder;
-
+		vector<RoleAssignment> currentRoleAssignments;
 
 		int nextRoleToAssign = 0;
 		for (int i = 0; i<players.size(); ++i){
@@ -148,37 +132,24 @@ void Gamestate::resolveNight(int nightPhase){
 			else{
 				toAdd.role = toAdd.player->determinedRole;
 			}
-			
-			roleOrder.push(toAdd);
+			currentRoleAssignments.push_back(toAdd);
 		}
 
-		bool valid = true;
+		//TODO: Get this data from somewhere
+		vector<int> executionTargets;
 
-		//Perform all night actions in order of increasing priority
-		while (!roleOrder.empty()){
-			RoleAssignment nextRole = roleOrder.top();
-			roleOrder.pop();
-			Role* target = roles[ roleAssignment[ nextRole.player->actions[nightPhase][nextRole.role->actionType] ]];
-			if (!nextRole.role->validateAction(target, nightPhase)){
-				valid = false;
-				continue;
-			}
-			nextRole.role->performAction(target, nightPhase);
-		}
-
-		//If this permutation isn't valid, then we don't record its statistics
-		if (!valid)
-		{
+		MafiaGame gameLogic = MafiaGame(currentRoleAssignments, executionTargets);\
+		vector<bool> permutationResults = gameLogic.resolveToPhase(phaseNumber);
+		//If the permutation is invalid, then we don't record statistics
+		if (permutationResults.size() == 0){
 			continue;
 		}
 
 		//Add the results of the current permutation to the statistics
 		nextRoleToAssign = 0;
-		for (int i = 0; i<players.size(); ++i){
-			bool dead;
+		for (int i = 0; i<currentRoleAssignments.size(); ++i){
 			if (players[i] ->determinedRole == NULL){
 				++roleCounts[i][roleAssignment[nextRoleToAssign]];
-				dead = roles[roleAssignment[nextRoleToAssign]]->phaseKilled >= 0;
 				++nextRoleToAssign;
 			}
 			else
@@ -188,32 +159,17 @@ void Gamestate::resolveNight(int nightPhase){
 					++roleIndex;
 				}
 				++roleCounts[i][roleIndex];
-				dead = players[i]->determinedRole->phaseKilled >=0;
 			}
 
-			if (dead){
-				++deathCounts[i][1];
-			}
-			else{
+			if (permutationResults[i]){
 				++deathCounts[i][0];
 			}
+			else{
+				++deathCounts[i][1];
+			}
 		}
 
-	} while (next_permutation(roleAssignment, roleAssignment+uncollapsedRoles.size()));
-
-	delete roleAssignment;
-}
-
-void Gamestate::resolveToCurrentPhase(){
-	while (resolvedTo < phaseNumber){
-		if (resolvedTo%2 == 0){
-			resolveNight(resolvedTo);
-		}
-		else{
-			//Resolve day
-		}
-		++resolvedTo;
-	}
+	} while (next_permutation(roleAssignment.begin(), roleAssignment.end()));
 }
 
 void Gamestate::submitActionsForPlayer(int playerNum, int phase, map<string, int> actions){
